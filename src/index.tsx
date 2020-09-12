@@ -1,17 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import {ThemeProvider, theme, CSSReset} from "@chakra-ui/core";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "./Assets/custom.scss";
+import AdminLayout from './Layouts/Admin';
+import AuthLayout from "./Layouts/Auth";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={theme}>
+      <CSSReset />
+      <BrowserRouter>
+        <Switch>
+          <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
+          <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
+          <Redirect from="/admin/index" to="/admin/home" />
+          <Redirect from="/" to="/admin/home" />
+        </Switch>
+      </BrowserRouter>
+    </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();

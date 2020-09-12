@@ -1,0 +1,32 @@
+// Sidebar
+#drawer-sidebar {
+    .short-drawer-menu {
+        cursor: pointer;
+        transition: .2s;
+
+        &:hover {
+            background: #285E61;
+        }
+    }
+    .drawer-menu {
+        transition: .2s;
+        cursor: pointer;
+        &:hover {
+            background: #E6FFFA;
+        }
+        &.active {
+            background: #319795;
+            border: 0px;
+            p, i {
+                color: #fff!important;
+            }
+        }
+    }
+}
+
+// General
+.sort-btn {
+    &.active {
+        background: #285E61;
+    }
+}
