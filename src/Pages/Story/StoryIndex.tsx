@@ -1,80 +1,78 @@
 import React, { Component } from 'react'
-import { 
-    NoDataView, 
-    IndexMenuControl, 
+import {withRouter, RouteComponentProps} from "react-router-dom";
+import {
+    NoDataView,
+    IndexMenuControl,
     IndexMenuControlSortType,
     LoadingLayer
 } from "./../../Components/Shared/Shared";
+import {ListItem, TileItem} from "./StoryIndexItem";
 import FadeIn from "react-fade-in"
 import moment from "moment";
 import {
     Box,
     Text
 } from "@chakra-ui/core";
-import {ShortAnime} from "./../Models";
-import {AnimeIndexItemList, AnimeIndexItemTile} from "./AnimeIndexItem";
-import AnimeAddModal from "./AnimeAddModal";
+import { ShortStory } from "./../Models";
 import API from "./../../api";
-import {AxiosResponse} from "axios";
+import { AxiosResponse } from "axios";
 interface State {
-    realData: ShortAnime[];
-    showData: ShortAnime[];
+    realData: ShortStory[];
+    showData: ShortStory[];
     view: "tile" | "list";
     isLoading: boolean;
-    isAddModalOpen: boolean;
 }
-class AnimeIndex extends Component<{}, State> {
-    constructor(props: {}) {
+
+class StoryIndex extends Component<RouteComponentProps, State> {
+    constructor(props: RouteComponentProps) {
         super(props);
         this.state = {
             realData: [],
             showData: [],
-            view: "tile",
+            view: "list",
             isLoading: true,
-            isAddModalOpen: false,
         }
-    }
-    toggleAddModal = () => {
-        this.setState({isAddModalOpen: !this.state.isAddModalOpen})
     }
     setShowData = (data: any[] = []) => {
         this.setState({
             showData: data
         })
     }
-    componentDidMount() {
-        API().get<{ data: { animes: ShortAnime[]}}>("anime")
+    handleDelete = () => {
+        this.setState({isLoading: true}, () => {
+            this.fetchStoriesData();
+        })
+    }
+    fetchStoriesData = (): void => {
+        API().get<{ data: { stories: ShortStory[] } }>("story")
             .then((resp) => {
-                const {data} = resp.data;
+                const { data } = resp.data;
                 this.setState({
-                    realData: data.animes,
-                    showData: data.animes,
+                    realData: data.stories,
+                    showData: data.stories,
                     isLoading: false
                 })
             })
             .catch(err => console.log(err.response))
-            
+    }
+    componentDidMount() {
+        this.fetchStoriesData()
     }
     render() {
-        const {realData, showData, view, isLoading, isAddModalOpen} = this.state;
+        const { realData, showData, view, isLoading } = this.state;
         const sorts: IndexMenuControlSortType[] = [
             {
-                key: "name",
-                label: "By Name"
-            },
-            {
-                key: "knownAs",
-                label: "By Known Title"
+                key: "title",
+                label: "By Title"
             },
             {
                 key: "lastUpdated",
                 label: "By Last Updated",
                 type: "date"
-            }
+            },
         ]
         return (
             <React.Fragment>
-                <AnimeAddModal isOpen={isAddModalOpen} onClose={this.toggleAddModal} />
                 <FadeIn>
                     <IndexMenuControl
                         onTotalSizePerPageChange={(data) => this.setShowData(data)}
@@ -83,23 +81,17 @@ class AnimeIndex extends Component<{}, State> {
                         onCurrentPageChange={(data) => this.setShowData(data)}
                         sorts={sorts}
                         disabledAll={realData.length < 1}
-                        searchIndex="name"
+                        searchIndex="title"
                         onSearchChange={(data) => this.setShowData(data)}
                         data={realData}
-                        addText="Add New Anime"
-                        onAddButtonClick={this.toggleAddModal}
+                        addText="Add New Story"
+                        onAddButtonClick={() => this.props.history.push("/admin/story/add")}
                     />
                 </FadeIn>
                 {isLoading ? <LoadingLayer isLoading={isLoading} /> : showData.length > 0 ? (
-                    <Box d="flex" mt={10} flexDir={view === "list" ? "column" : "row"} ml={{ md: "2%" }} justifyContent="left" flexWrap="wrap">
+                    <Box d="flex" mt={10} flexDir={view === "list" ? "column" : "row"} justifyContent="left" flexWrap="wrap">
                         {showData.map((data, key) => {
-                            return view === "list" ? (
-                                <FadeIn delay={key * 2}>
-                                    <AnimeIndexItemList data={data} key={key} />
-                                </FadeIn>
-                            ) : (
-                                    <AnimeIndexItemTile data={data} key={key} />
-                                )
+                            return view === "list" ? <ListItem key={key} story={data} afterDelete={this.handleDelete} /> : <TileItem story={data} key={key} afterDelete={this.handleDelete} />
                         })}
                     </Box>
                 ) : <FadeIn><NoDataView /></FadeIn>}
@@ -107,4 +99,4 @@ class AnimeIndex extends Component<{}, State> {
         )
     }
 }
-export default AnimeIndex
+export default withRouter(StoryIndex)

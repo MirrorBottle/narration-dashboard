@@ -36,16 +36,17 @@ class Admin extends Component<RouteComponentProps> {
         return "Brand";
     };
     render() {
-        const firstRoute = routes[0];
-        return (
-            <div className="App">
+        return sessionStorage.getItem("chakranime") ? (
+            <div className="Admin">
                 <Navs brandText={this.getBrandText(routes)} />
-                <Box px={20} py={10}>
+                <Box px={{sm: 5, md: 20}} py={10}>
                     <Switch>
                         {this.getRoutes(routes)}
                     </Switch>
                 </Box>
             </div>
+        ) : (
+            <Redirect to="/auth/login" />
         )
     }
 }

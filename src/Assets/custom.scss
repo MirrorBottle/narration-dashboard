@@ -1,11 +1,68 @@
+$dark_mode_input: #272D38;
+$main_teal: #285E61;
 // Sidebar
+body {
+    overflow-y: auto!important;
+    &.dark-mode {
+        #login-form {
+            input {
+                color: #000!important;
+            }
+        }
+        .react-select {
+            .select__single-value {
+                color: #fff;
+            }
+            .select__control {
+                background: $dark_mode_input;
+            }
+            .select__menu {
+                background: $dark_mode_input;
+                .select__option {
+                    &.select__option--is-focused,
+                    &.select__option--is-selected {
+                        background: $main_teal!important;
+                    }
+                }
+            }
+        }
+        .ck {
+            &.ck-editor__main {
+                color: #fff!important;
+            }
+            &.ck-content {
+                background: $dark_mode_input;
+                border: 0px;
+            }
+            &.ck-toolbar__separator {
+                background: $dark_mode_input!important;
+            }
+            &.ck-button {
+                &.ck-off,
+                &.ck-on {
+                    color: #fff!important;
+                    &:hover,
+                    &:focus {
+                        background: $main_teal!important;
+                    }
+                }
+            }
+           &.ck-toolbar {
+               &.ck-toolbar_grouping {
+                   background: $dark_mode_input;
+                   border: 0px;
+               }
+           }
+        }
+    }
+}
 #drawer-sidebar {
     .short-drawer-menu {
         cursor: pointer;
         transition: .2s;
 
         &:hover {
-            background: #285E61;
+            background: $main_teal;
         }
     }
     .drawer-menu {
@@ -25,8 +82,38 @@
 }
 
 // General
-.sort-btn {
+.sort-btn, .pagination-btn {
     &.active {
-        background: #285E61;
+        background: $main_teal;
     }
 }
+.tile div {
+    width: 100%!important;
+}
+.fade-in-tile {
+    width: 100%!important;
+    margin-right: 0px;
+        margin-left: 0px;
+}
+.react-select {
+    .select__control {
+        height: 100%;
+        .select__multi-value {
+            background: #2C7A7B;
+            color: #fff;
+            .select__multi-value__label {
+                color: #fff;
+            }
+        }
+    }
+    height: 100%;
+}
+@media (min-width: 768px) {
+    .fade-in-tile {
+        width: 21rem!important;
+        margin-left: 1rem;
+        margin-right: 1rem;
+        height: 100%;
+    }
+}
+
